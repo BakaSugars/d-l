@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "_src/*": [
+                "src/*"
+            ],
+            "_util/*": [
+                "src/util/*"
+            ],
+            "_client/*": [
+                "src/render/*"
+            ],
+            "_server/*": [
+                "src/ui/*"
+            ]
+        },
+        "target": "es5",
+        "module": "ESNext",
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "lib": [
+            "es2015",
+            "dom"
+        ],
+        "noImplicitAny": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+    ]
+}

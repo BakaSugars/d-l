@@ -1,0 +1,164 @@
+{
+    "extends": [
+        "tslint:recommended",
+        "tslint-eslint-rules"
+    ],
+    "rules": {
+        "no-conditional-assignment": true,
+        "no-debugger": true,
+        "no-duplicate-case": true,
+        "no-empty": true,
+        "no-ex-assign": true,
+        "no-extra-boolean-cast": true,
+        "no-inner-declarations": true,
+        "no-sparse-arrays": true,
+        "no-unexpected-multiline": true,
+        "no-unsafe-finally": true,
+        "valid-typeof": true,
+        "no-constant-condition": true,
+        "prefer-const": true,
+        "object-literal-shorthand": true,
+        "ter-arrow-spacing": true,
+        "object-curly-spacing": [
+            true,
+            "always"
+        ],
+        "cyclomatic-complexity": [
+            true,
+            10
+        ],
+        "triple-equals": true,
+        "forin": true,
+        "no-arg": true,
+        "no-invalid-this": true,
+        "no-bitwise": false,
+        "label-position": true,
+        "no-console": {
+            "severity": "warning"
+        },
+        "no-magic-numbers": {
+            "options": [
+                1024,
+                180,
+                360,
+                60,
+                1000
+            ],
+            "severity": "warning"
+        },
+        "interface-name": {
+            "severity": "warning"
+        },
+        "no-multi-spaces": true,
+        "no-unused-expression": true,
+        "radix": true,
+        "ter-max-len": [
+            true,
+            {
+                "code": 200,
+                "tabWidth": 4,
+                "ignoreImports": true,
+                "ignoreUrls": true,
+                "ignorePattern": "^\\s*(let|const)\\s.+=\\s*require\\s*\\("
+            }
+        ],
+        "max-file-line-count": [
+            true,
+            1500
+        ],
+        "class-name": true,
+        "indent": [
+            true,
+            "spaces",
+            4
+        ],
+        "no-duplicate-variable": true,
+        "no-eval": true,
+        "no-internal-module": true,
+        "no-trailing-whitespace": true,
+        "no-var-keyword": true,
+        "one-line": [
+            true,
+            "check-open-brace",
+            "check-whitespace"
+        ],
+        "semicolon": true,
+        "interface-name": {
+            "severity": "warning"
+        },
+        "ordered-imports": {
+            "severity": "warning"
+        },
+        "object-literal-sort-keys": {
+            "severity": "warning"
+        },
+        "comment-format": {
+            "options": [
+                "check-space"
+            ],
+            "severity": "warning"
+        },
+        "trailing-comma": {
+            "severity": "warning"
+        },
+        "jsdoc-format": {
+            "options": [
+                "check-multiline-start"
+            ],
+            "severity": "warning"
+        },
+        "member-ordering": {
+            "severity": "warning",
+            "options": {
+                "order": [
+                    "public-static-field",
+                    "public-instance-field",
+                    "private-static-field",
+                    "private-instance-field",
+                    "private-constructor",
+                    "public-constructor",
+                    "public-instance-method",
+                    "protected-instance-method",
+                    "private-instance-method"
+                ]
+            }
+        },
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            }
+        ],
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-pascal-case",
+            "allow-leading-underscore"
+        ],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-separator",
+            "check-type",
+            "check-module"
+        ],
+        "quotemark": [
+            true,
+            "single"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
