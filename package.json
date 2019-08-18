@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/BakaSugars/d-l#readme",
   "devDependencies": {
+    "@types/webgl-ext": "0.0.30",
     "awesome-typescript-loader": "^5.2.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",

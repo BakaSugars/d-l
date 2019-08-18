@@ -37,7 +37,7 @@ const config = merge(base, {
         compress: true,
         host: '0.0.0.0',
         disableHostCheck: true,
-        port: 3000,
+        port: 8888,
         hot: true
     }
 });
