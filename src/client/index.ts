@@ -5,6 +5,7 @@ import Camera from "_src/client/view/camera";
 import { ViewPort } from "_src/client/view/viewPort";
 import Keyboard from "_src/client/ui/keyboard";
 import EventEmitter from "_src/utils/eventEmitter";
+import Point from "_src/utils/point";
 
 
 export class Game extends EventEmitter{
@@ -26,6 +27,9 @@ export class Game extends EventEmitter{
         const camera = new Camera(this._viewPort);
         this._player = new Player('shujingwei', 'sjwsjw', camera);
         this._scene.joinPlayer(this._player);
+        this._keyBoard.on('change_speed', (vector: Point) => {
+            this._player.shooter.speed.add(vector);
+        });
     }
     
     public framePaint() {

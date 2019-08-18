@@ -5,6 +5,8 @@ export default class Shooter {
     private _id: string;
     private _size: number = 10;
     private _color: number[] = [0, 0, 0, 255];
+    private _speed: Point = new Point(0, 0, 0);
+    private _defaultDecSpeed: number = 0.04;
     constructor(loc: Point, id: string, secret: string, color?: number[], size?: number) {
         this._loc = loc;
         this._id = id;
@@ -30,5 +32,16 @@ export default class Shooter {
 
     public get color() {
         return this._color;
+    }
+
+    public update() {
+        this.loc.add(this._speed);
+        if (this._speed.mag() !== 0) {
+            this._speed.sub(this._speed.clone().mult(this._defaultDecSpeed));
+        }
+    }
+    
+    public get speed() {
+        return this._speed;
     }
 }

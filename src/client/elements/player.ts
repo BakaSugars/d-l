@@ -29,6 +29,10 @@ export class Player {
         this._camera = val;
     }
 
+    public get shooter() {
+        return this._shooter;
+    }
+
     public fitCamera() {
         this._camera.setLoc(this._shooter.loc);
     }

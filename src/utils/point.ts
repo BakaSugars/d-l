@@ -18,6 +18,13 @@ export default class Point {
         return this;
     }
 
+    public sub(p: Point) {
+        this._x -= p.x;
+        this._y -= p.y;
+        this._z -= p.z;
+        return this;
+    }
+
     public unit() {
         this.div(this.mag());
         return this;

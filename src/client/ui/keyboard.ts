@@ -19,7 +19,7 @@ export const enum KeyCode {
     MinusFirefox = 173
 }
 
-const speedBase = 0.1;
+const speedBase = 0.2;
 const speedMap = {
 };
 speedMap[KeyCode.W] = new Point(0, -1, 0);
@@ -42,7 +42,9 @@ export default class Keyboard extends EventEmitter{
 
     private keyDown(e: KeyboardEvent) {
         const keyCode = e.keyCode;
-        this._nowFrameEvent[keyCode] = speedMap[keyCode];
+        if (speedMap[keyCode]) {
+            this._nowFrameEvent[keyCode] = speedMap[keyCode];
+        }
     }
 
     private keyUp(e: KeyboardEvent) {
@@ -64,7 +66,6 @@ export default class Keyboard extends EventEmitter{
                         vector.unit();
                     }
                     vector.mult(speedBase);
-                    console.log(vector);
                     this.emit('change_speed', vector);
                     loop();
                 });
