@@ -8,7 +8,8 @@
     "dev": "webpack-dashboard -- webpack-dev-server --config ./build/webpack.config.dev.js --inline --progress --watch --open",
     "build:prod": "rm -rf dist/ && cross-env NODE_ENV=production webpack --config ./build/webpack.config.prod.js ",
     "tslint": "tslint --fix './src/**/**.ts'",
-    "tscheck": "tsc --project ."
+    "tscheck": "tsc --project .",
+    "build:server": "rm -rf server/ && cross-env NODE_ENV=production webpack --config ./build/webpack.config.server.js"
   },
   "types": "./src/types/index.d.ts",
   "repository": {
@@ -50,5 +51,8 @@
     "webpack-merge": "^4.2.1",
     "webpack-typescript": "^0.5.6"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/ws": "^6.0.2",
+    "ws": "^7.1.2"
+  }
 }

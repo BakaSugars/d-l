@@ -1,0 +1,1 @@
+export const wsServerUrl = 'ws://localhost:8989';

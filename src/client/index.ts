@@ -6,6 +6,8 @@ import { ViewPort } from "_src/client/view/viewPort";
 import Keyboard from "_src/client/ui/keyboard";
 import EventEmitter from "_src/utils/eventEmitter";
 import Point from "_src/utils/point";
+import WSocket from "./net/ws";
+import { wsServerUrl } from "_src/utils/constant";
 
 
 export class Game extends EventEmitter{
@@ -14,6 +16,7 @@ export class Game extends EventEmitter{
     private _viewPort: ViewPort;
     private _player: Player;
     private _keyBoard: Keyboard;
+    private _ws: WSocket;
     constructor() {
         super();
         const element = document.getElementById('game') as HTMLCanvasElement;
@@ -21,6 +24,7 @@ export class Game extends EventEmitter{
         this._renderer = new Renderer(element);
         this._scene = new Scene(10, 10, this._renderer);
         this._keyBoard = new Keyboard(element);
+        this._ws = new WSocket(wsServerUrl);
     }
 
     public connectPlayer() {
