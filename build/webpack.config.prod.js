@@ -11,7 +11,6 @@ const version = require('../package.json').version;
 
 var config = merge(base, {
     output: {
-        publicPath,
         path: path.resolve("./dist"),
         filename: "[name].min.js",
         sourceMapFilename: "[file].map",
