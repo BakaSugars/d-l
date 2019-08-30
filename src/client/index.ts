@@ -24,7 +24,6 @@ export class Game extends EventEmitter{
         this._renderer = new Renderer(element);
         this._scene = new Scene(10, 10, this._renderer);
         this._keyBoard = new Keyboard(element);
-        this._ws = new WSocket(wsServerUrl);
     }
 
     public connectPlayer() {
@@ -34,6 +33,7 @@ export class Game extends EventEmitter{
         this._keyBoard.on('change_speed', (vector: Point) => {
             this._player.shooter.speed.add(vector);
         });
+        this._ws = new WSocket(wsServerUrl);
     }
     
     public framePaint() {

@@ -8,3 +8,11 @@ export function extend(dest: any, ...sources: any[]): any {
     }
     return dest;
 }
+let id = 0;
+export function createId() {
+    return id ++;
+}
+
+export function clearGlobalId() {
+    id = 0;
+}

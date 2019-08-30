@@ -1,4 +1,5 @@
-import { EventEmitter } from "events";
+import EventEmitter from "_src/utils/eventEmitter";
+import Event from "_src/utils/event";
 
 const SocketStatus = {
     Connecting: 0,
@@ -17,17 +18,24 @@ export default class WSocket extends EventEmitter {
         this._ws.onclose = this._onClose.bind(this);
     }
 
+    public send(msg: ArrayBuffer) {
+        this._ws.send(msg);
+    }
+
     private _onOpen() {
         console.log('connect success');
+        this.emit(new Event('consuccess'));
         this._status = SocketStatus.Connected;
     }
 
     private _onMessage(e: any) {
-        console.log(e.data);
+        this.emit(new Event('onmessage', e.data));
+        console.log('get message');
     }
 
     private _onClose() {
         console.log('connnect closed');
+        this.emit(new Event('conclose'));
         this._status = SocketStatus.Closed;
     }
 }
