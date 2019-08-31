@@ -1,6 +1,6 @@
 import Point from "_src/utils/point";
-import { EventEmitter } from "events";
 import { createId } from "_src/utils/util";
+import EventEmitter from "_src/utils/eventEmitter";
 
 export default class GameElement extends EventEmitter {
     private _loc: Point;

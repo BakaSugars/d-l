@@ -4,8 +4,13 @@ import Point from "_src/utils/point";
 
 export class Player extends GameElement {
     private _connection: Connection
-    constructor(p: Point, con: Connection) {
-        super(p);
+    constructor(con: Connection) {
+        super(null);
         this._connection = con;
+        this._connection.on('onmessage', this.onMessage.bind(this));
+    }
+
+    public onMessage(data: any) {
+        console.log(data);
     }
 }
