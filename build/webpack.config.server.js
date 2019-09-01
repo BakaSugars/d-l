@@ -42,7 +42,8 @@ var config = {
         extensions: [".ts", ".js"]
     },
     plugins: [
-    ]
+    ],
+    externals: [/node_modules/, 'bufferutil', 'utf-8-validate'],
 };
 
 if (process.env.npm_config_report) {

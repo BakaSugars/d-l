@@ -5,14 +5,14 @@
             "_src/*": [
                 "src/*"
             ],
-            "_util/*": [
-                "src/util/*"
+            "_utils/*": [
+                "src/utils/*"
             ],
             "_client/*": [
-                "src/render/*"
+                "src/client/*"
             ],
             "_server/*": [
-                "src/ui/*"
+                "src/server/*"
             ]
         },
         "target": "es5",

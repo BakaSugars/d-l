@@ -8,6 +8,7 @@ import EventEmitter from "_src/utils/eventEmitter";
 import Point from "_src/utils/point";
 import WSocket from "./net/ws";
 import { wsServerUrl } from "_src/utils/constant";
+import { Connection } from "_src/client/net/connection";
 
 
 export class Game extends EventEmitter{
@@ -16,7 +17,7 @@ export class Game extends EventEmitter{
     private _viewPort: ViewPort;
     private _player: Player;
     private _keyBoard: Keyboard;
-    private _ws: WSocket;
+    private _connection: Connection;
     constructor() {
         super();
         const element = document.getElementById('game') as HTMLCanvasElement;
@@ -33,7 +34,7 @@ export class Game extends EventEmitter{
         this._keyBoard.on('change_speed', (vector: Point) => {
             this._player.shooter.speed.add(vector);
         });
-        this._ws = new WSocket(wsServerUrl);
+        this._connection = new Connection(this._player);
     }
     
     public framePaint() {

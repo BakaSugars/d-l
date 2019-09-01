@@ -6,29 +6,29 @@
             "_src/*": [
                 "src/*"
             ],
-            "_util/*": [
-                "src/util/*"
+            "_utils/*": [
+                "src/utils/*"
             ],
             "_client/*": [
-                "src/render/*"
+                "src/client/*"
             ],
             "_server/*": [
-                "src/ui/*"
+                "src/server/*"
             ]
         },
         "target": "es6",
-        "module": "es2015",
+        "module": "ESNext",
         "sourceMap": true,
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "lib": [
-            "es2015",
+            "es2015"
         ],
         "noImplicitAny": true,
         "suppressImplicitAnyIndexErrors": true
     },
     "exclude": [
         "node_modules",
-        "dist",
+        "dist"
     ]
 }

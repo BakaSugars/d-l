@@ -10,7 +10,7 @@
     "tslint": "tslint --fix './src/**/**.ts'",
     "tscheck": "tsc --project .",
     "build:server": "rm -rf server/ && cross-env NODE_ENV=production webpack --config ./build/webpack.config.server.js",
-    "server": "build:server && ts-node ./src/server/index.ts"
+    "start": "npm run build:server && node ./server/dark.min.js"
   },
   "types": "./src/types/index.d.ts",
   "repository": {

@@ -51,4 +51,8 @@ export default class Point {
     public clone() {
         return new Point(this._x, this._y, this._z);
     }
+
+    public toArray() {
+        return [this. x, this.y];
+    }
 }
