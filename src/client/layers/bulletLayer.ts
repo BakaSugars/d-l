@@ -1,38 +1,43 @@
 import { Layer } from "_src/client/layers/layer";
-import Shooter from "_src/client/elements/shooter";
 import mat4 from "_src/utils/mat4";
 import Buffer, { Attribute } from "_src/client/render/buffer";
 import Renderer from "_src/client/render/renderer";
+import { BulletManager } from "_src/client/elements/bulletManager";
+import Shooter from "_src/client/elements/shooter";
+import Bullet from "_src/client/elements/bullet";
 import Point from "_src/utils/point";
 
-export default class ShooterLayer extends Layer {
-    private _shooters: Shooter[] = [];
+export default class BulletLayer extends Layer {
+    private _bulletManagers: BulletManager[] = [];
     protected _vertexBufferByteSize: number = 20
-    protected _programType = 'circle';
+    protected _programType = 'triangle';
 
     constructor(renderer: Renderer) {
         super(renderer);
         this._initProgram();
     }
 
-    public get shooters() {
-        return this._shooters;
+    public addBulletManager(shooter: Shooter) {
+        this._bulletManagers.push(shooter.bulletManager);
     }
 
-    public addShooter(shooter: Shooter) {
-        this._shooters.push(shooter);
-    }
-
-    public update () {
+    public update() {
         const segment = this._createSegment();
-        const shooterNum = this._shooters.length + 1;
-        this.vertexArray = new ArrayBuffer(this._vertexBufferByteSize * shooterNum * 4);
-        this._elementArray = new Uint16Array(shooterNum * 6);
-        this._shooters.forEach((s: Shooter, index: number) => {
-            this._resolveShooter(s, index);
+        let bulletNum = 0;
+        this._bulletManagers.forEach((bulletManager: BulletManager) => {
+            bulletNum += bulletManager.bulletNum;
         });
-        segment.vertexLength = shooterNum * 4;
-        segment.primitiveLength = shooterNum * 2;
+        this.vertexArray = new ArrayBuffer(bulletNum * 4 * this._vertexBufferByteSize);
+        this._elementArray = new Uint16Array(bulletNum * 6);
+        let bulletIndex = 0;
+        this._bulletManagers.forEach((manager: BulletManager) => {
+            manager.forEach((bullet: Bullet) => {
+                this._resolveBullet(bullet, bulletIndex);
+                bulletIndex ++;
+            });
+        });
+        segment.vertexLength = bulletNum * 4;
+        segment.primitiveLength = bulletNum * 2;
         this._segments = [segment];
     }
 
@@ -69,7 +74,7 @@ export default class ShooterLayer extends Layer {
         }
     }
 
-    private _resolveShooter(s: Shooter, index: number) {
+    private _resolveBullet(s: Bullet, index: number) {
         const beforeIndex = index;
         index = index * 4;
         this._resolveVeretx(s, index, 0, 1);
@@ -86,7 +91,7 @@ export default class ShooterLayer extends Layer {
 
     };
 
-    private _resolveVeretx(s: Shooter, index: number, offsetX: number, offsetY: number) {
+    private _resolveVeretx(s: Bullet, index: number, offsetX: number, offsetY: number) {
         const floatOffset = index * this._vertexBufferByteSize / 4;
         const uint8Offset = index * this._vertexBufferByteSize;
         const x = s.loc.x;
@@ -94,7 +99,7 @@ export default class ShooterLayer extends Layer {
         const z = s.loc.z;
         const color = s.color;
         const size = s.size;
-        this.float32VertexArray[floatOffset] = x 
+        this.float32VertexArray[floatOffset] = x
         this.float32VertexArray[floatOffset + 1] = y;
         this.float32VertexArray[floatOffset + 2] = z;
         const infos = (size * 2 + offsetX) * 2 + offsetY;

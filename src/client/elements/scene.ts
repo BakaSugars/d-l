@@ -11,6 +11,8 @@ import Renderer from "_src/client/render/renderer";
 import { Border } from "_src/client/elements/border";
 import { GridLayer } from "_src/client/layers/gridLayers";
 import Coordinate from "_src/utils/coordinate";
+import BulletLayer from "_src/client/layers/bulletLayer";
+import { CollsionManager } from "_src/client/elements/collsionManager";
 
 export class Scene {
     private _width: number;
@@ -18,23 +20,41 @@ export class Scene {
     private _dataBucket: DataBucket;
     private _gridLayer: GridLayer;
     private _shooterLayer: ShooterLayer;
-    private _bullets: Bullet[] = [];
+    private _bulletLayer: BulletLayer;
     private _camera: Camera;
     private _border: Border;
+    private _collisonManager: CollsionManager;
     private _gridSize = 50;
     constructor(width: number, height: number, renderer: Renderer) {
         this._width = width;
         this._height = height;
         this._dataBucket = new DataBucket();
         this._shooterLayer = new ShooterLayer(renderer);
+        this._bulletLayer = new BulletLayer(renderer);
         this._gridLayer = new GridLayer(renderer);
         this._border = new Border(width, height, this._gridSize);
+        this._collisonManager = new CollsionManager();
         this._initGrids();
+    }
+
+    public update() {
+        this._shooterLayer.shooters.forEach((shooter: Shooter) => {
+            shooter.update();
+        });
+    }
+
+    public globalCollsion() {
+        this._collisonManager.clear();
+        this._border.addCollsionUnit(this._collisonManager);
+        this._shooterLayer.shooters.forEach((shooter: Shooter) => {
+            shooter.addCollsionUnit(this._collisonManager);
+        });
     }
 
     public joinPlayer(p: Player) {
         const shooter = p.createShooter(new Point(0, 0, 0));
         this._shooterLayer.addShooter(shooter);
+        this._bulletLayer.addBulletManager(shooter);
     }
 
     public setView(p: Player) {
@@ -43,8 +63,11 @@ export class Scene {
     }
 
     public draw() {
+        this.update();
+        this.globalCollsion();
         this._gridLayer.draw(this._camera.mvpMatrix);
         this._shooterLayer.draw(this._camera.mvpMatrix);
+        this._bulletLayer.draw(this._camera.mvpMatrix);
     }
 
 

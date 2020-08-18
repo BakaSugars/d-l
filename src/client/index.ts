@@ -9,6 +9,7 @@ import Point from "_src/utils/point";
 import WSocket from "./net/ws";
 import { wsServerUrl } from "_src/utils/constant";
 import { Connection } from "_src/client/net/connection";
+import { Mouse } from "_src/client/ui/mouse";
 
 
 export class Game extends EventEmitter{
@@ -16,24 +17,28 @@ export class Game extends EventEmitter{
     private _renderer: Renderer;
     private _viewPort: ViewPort;
     private _player: Player;
-    private _keyBoard: Keyboard;
     private _connection: Connection;
+    private _container: HTMLElement;
     constructor() {
         super();
         const element = document.getElementById('game') as HTMLCanvasElement;
         this._viewPort = new ViewPort(element);
         this._renderer = new Renderer(element);
         this._scene = new Scene(10, 10, this._renderer);
-        this._keyBoard = new Keyboard(element);
     }
 
     public connectPlayer() {
         const camera = new Camera(this._viewPort);
-        this._player = new Player('shujingwei', 'sjwsjw', camera);
-        this._scene.joinPlayer(this._player);
-        this._keyBoard.on('change_speed', (vector: Point) => {
-            this._player.shooter.speed.add(vector);
+        const keyboard = new Keyboard(this._container);
+        const mouse = new Mouse(this._container, camera);
+        this._player = new Player({
+            id: 'shujingwei',
+            secret: 'sjwsjw',
+            camera,
+            keyboard,
+            mouse
         });
+        this._scene.joinPlayer(this._player);
         this._connection = new Connection(this._player);
     }
     

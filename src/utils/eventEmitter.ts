@@ -75,6 +75,12 @@ export default class EventEmitter {
         this._parent = parent;
     }
 
+    public destroy() {
+        this._listeners = {};
+        this._oneTimeListeners = {};
+        this._parent = null;
+    }
+
     private _removeEventListener(type: string, listener: Listener, listenerList: IListeners) {
         if (listenerList && listenerList[type]) {
             const index = listenerList[type].indexOf(listener);

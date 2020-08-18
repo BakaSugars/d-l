@@ -26,6 +26,10 @@ export default class Point {
     }
 
     public unit() {
+        const mag = this.mag();
+        if (mag === 0) {
+            return this;
+        }
         this.div(this.mag());
         return this;
     }

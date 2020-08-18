@@ -1,6 +1,7 @@
 import Point from "_src/utils/point";
 import mat4 from "_src/utils/mat4";
 import { ViewPort } from "_src/client/view/viewPort";
+import vec4 from "_src/utils/vec4";
 
 export default class Camera {
     private _loc: Point = new Point(0, 0, 0);
@@ -22,6 +23,7 @@ export default class Camera {
         this._pixelHeight = viewport.canvas.offsetHeight;
         this._pixelWidth = viewport.canvas.offsetWidth;
         this.setLoc(new Point(0, 0, 0));
+        this.setPitch(1);
     }
 
     public get mvpMatrix() {
@@ -38,6 +40,22 @@ export default class Camera {
         this._currentPitch = pitch;
         this._updateMVPMatrix();
         this._updatePixelMatrix();
+    }
+
+    public pixelToCoordinate(pixel: Point): Point {
+        const A = vec4.create();
+        const B = vec4.create();
+        vec4.transformMat4(A, [pixel.x, pixel.y, 0, 1], this._pixelMatrixReverse);
+        vec4.transformMat4(B, [pixel.x, pixel.y, 1, 1], this._pixelMatrixReverse);
+        const x = (A[2] / A[3] * B[0] / B[3] - A[0] / A[3] * B[2] / B[3]) / (A[2] / A[3] - B[2] / B[3]);
+        const y = (A[2] / A[3] * B[1] / B[3] - B[2] / B[3] * A[1] / A[3]) / (A[2] / A[3] - B[2] / B[3]);
+        const point = new Point(x, y, 0);
+        const testp = vec4.create();
+        vec4.transformMat4(testp, [x, y, 0, 1], this._modelViewMatrix);
+        if (testp[2] >= 0) {
+            console.warn('The point are beyond the scope of the screen and the projection is incorrect.');
+        }
+        return point;
     }
 
     public setAngle(angle: number) {

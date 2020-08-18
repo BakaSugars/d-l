@@ -300,7 +300,7 @@ export class Program {
         }
     }
 
-    private freshBindVAO(gl: WebGLRenderingContext, buffers: BufferGroup, segment: Segment2) {
+    public freshBindVAO(gl: WebGLRenderingContext, buffers: BufferGroup, segment: Segment2) {
         this._boundElementBuffer = buffers.elementArrayBuffer;
         this._boundPaintVertexArrayBuffer = buffers.paintVertexArrayBuffer;
         this._boundLayoutVertexBuffer = buffers.vertexLayoutArrayBuffer;

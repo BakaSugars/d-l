@@ -28,6 +28,9 @@ export abstract class Layer {
 
     public draw(matrix: mat4) {
         this.update();
+        if (!this._vertexArray.byteLength) {
+            return;
+        }
         this._renderer.useProgram(this._program);
         this._program.bindNoCachedMatrix(this._gl, new Float32Array(matrix));
         const buffers = this._createGLBufferGroup();
