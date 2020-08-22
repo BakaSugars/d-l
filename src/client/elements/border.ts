@@ -2,39 +2,40 @@ import Point from "_src/utils/point";
 import { Element } from "_src/client/elements/element";
 import CollsionBox from "_src/client/elements/collisionBox";
 import { CollsionType, CollsionManager } from "_src/client/elements/collsionManager";
+import { BorderElement } from "_src/client/elements/borderElement";
 
-export class Border extends Element {
+export class Border {
     private _width: number;
     private _height: number;
     private _gridSize: number;
-    protected _collsionUnitType = CollsionType.Border;
+    private _borderWidth = 20;
+    private _topBorder: BorderElement;
+    private _leftBorder: BorderElement;
+    private _rightBorder: BorderElement;
+    private _bottomBorder: BorderElement;
+    private _borders: BorderElement[] = [];
     constructor(width: number, height: number, gridSize: number) {
-        super({
-            loc: new Point(0, 0, 0),
-            speed: new Point(0, 0, 0)
-        })
         this._width = width * gridSize;
         this._height = height * gridSize;
         this._gridSize = gridSize;
+        this.initBorders();
     }
 
-    public updateCollsionUnit() {
+    protected _getCollsionPoint() {
         const deltaValueX = this._width / 2;
         const deltaValueY = this._height / 2;
         const deltaPoint = new Point(deltaValueX, deltaValueY, 0);
-        this._collsionUnit = new CollsionBox(
-            this.loc.clone().sub(deltaPoint),
-            this.loc.clone().add(deltaPoint),
-            this._collsionUnitType
-        )
+        return deltaPoint;
     }
 
     public addCollsionUnit(collisionManager: CollsionManager) {
-        collisionManager.addCollsionUnit(this._collsionUnit, {
-            collisionTypes: [
-                CollsionType.Bullet,
-                CollsionType.Bullet
-            ]
+        this._borders.forEach((border: BorderElement) => {     
+            collisionManager.addCollsionUnit(border.collisionUnit, {
+                collisionTypes: [
+                    CollsionType.Bullet,
+                    CollsionType.Shooter
+                ]
+            });
         });
     }
     
@@ -45,5 +46,33 @@ export class Border extends Element {
         if (p.y < -this._height / 2 || p.y > this._height / 2) {
             return false;
         }
+    }
+
+    private initBorders() {
+        const half = this._borderWidth / 2;
+        this._topBorder = new BorderElement({
+            loc: new Point(0, -this._height / 2 - half, 0),
+            height: this._borderWidth,
+            width: this._width
+        });
+        this._borders.push(this._topBorder);
+        this._rightBorder = new BorderElement({
+            loc: new Point(this._width / 2 + half, 0, 0),
+            height: this._height,
+            width: this._borderWidth
+        });
+        this._borders.push(this._rightBorder);
+        this._leftBorder = new BorderElement({
+            loc: new Point(-this._width / 2 - half, 0, 0),
+            height: this._height,
+            width: this._borderWidth
+        });
+        this._borders.push(this._leftBorder);
+        this._bottomBorder = new BorderElement({
+            loc: new Point(0, this._height / 2 + half, 0),
+            height: this._borderWidth,
+            width: this._width
+        });
+        this._borders.push(this._bottomBorder);
     }
 }

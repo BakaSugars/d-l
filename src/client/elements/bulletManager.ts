@@ -27,6 +27,7 @@ export class BulletManager extends EventEmitter {
             newLink.destroy();
             this._bulletNum --;
         });
+        return bullet;
     }
 
     public addCollsionUnit(collsionManager: CollsionManager) {
@@ -48,6 +49,13 @@ export class BulletManager extends EventEmitter {
             handle(nowBullet.value);
             nowBullet = nowBullet.beforeLink;
         }
+    }
+
+    public destroy() {
+        this.forEach((bullet: Bullet) => {
+            bullet.destroy();
+        });
+        super.destroy();
     }
 
     public update() {

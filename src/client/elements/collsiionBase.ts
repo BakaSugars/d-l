@@ -1,6 +1,6 @@
 import EventEmitter from "_src/utils/eventEmitter";
-import { CollsionType } from "_src/client/elements/collsionManager";
 import Event from "_src/utils/event";
+import { Element } from "_src/client/elements/element";
 
 export enum CollsionEvent {
     Destroy = 'del',
@@ -8,20 +8,24 @@ export enum CollsionEvent {
 }
 
 export abstract class CollsionBase extends EventEmitter {
-    private _type: CollsionType;
-    constructor(type: CollsionType) {
+    private _from: Element;
+    constructor() {
         super();
-        this._type = type;
-    }
-    
-    public get type() {
-        return this._type;
     }
 
+    public get from() {
+        return this._from;
+    }
+
+    public set from(element: Element) {
+        this._from = element;
+    }
+    
     public abstract intersect(collsionSomething: CollsionBase): boolean;
 
     public destroy() {
         this.emit(new Event(CollsionEvent.Destroy, this));
+        this._from = null;
         super.destroy();
     }
 }

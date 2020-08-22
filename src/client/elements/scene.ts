@@ -13,6 +13,8 @@ import { GridLayer } from "_src/client/layers/gridLayers";
 import Coordinate from "_src/utils/coordinate";
 import BulletLayer from "_src/client/layers/bulletLayer";
 import { CollsionManager } from "_src/client/elements/collsionManager";
+import { TrashFish } from "_src/client/enemy/trashFish";
+import { Element } from "_src/client/elements/element";
 
 export class Scene {
     private _width: number;
@@ -25,6 +27,7 @@ export class Scene {
     private _border: Border;
     private _collisonManager: CollsionManager;
     private _gridSize = 50;
+    private _trashFishs: TrashFish[] = [];
     constructor(width: number, height: number, renderer: Renderer) {
         this._width = width;
         this._height = height;
@@ -38,6 +41,9 @@ export class Scene {
     }
 
     public update() {
+        this._trashFishs.forEach((trashFish: TrashFish) => {
+            trashFish.update();
+        });
         this._shooterLayer.shooters.forEach((shooter: Shooter) => {
             shooter.update();
         });
@@ -55,6 +61,7 @@ export class Scene {
         const shooter = p.createShooter(new Point(0, 0, 0));
         this._shooterLayer.addShooter(shooter);
         this._bulletLayer.addBulletManager(shooter);
+        this._initEnemy(shooter);
     }
 
     public setView(p: Player) {
@@ -70,6 +77,18 @@ export class Scene {
         this._bulletLayer.draw(this._camera.mvpMatrix);
     }
 
+    private _initEnemy(hate: Element) {
+        for(let i = 0; i < 50; i++) {
+            const trashFish = new TrashFish({
+                hate
+            });
+            const random = new Point(Math.random() - 0.5, Math.random() - 0.5, 0);
+            const shooter = trashFish.createTrashFish(random.mult(1500));
+            this._shooterLayer.addShooter(shooter);
+            this._bulletLayer.addBulletManager(shooter);
+            this._trashFishs.push(trashFish);
+        }
+    }
 
     private _initGrids() {
         for (let i = 0; i < this._width; i ++) {

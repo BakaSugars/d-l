@@ -59,6 +59,7 @@ export class Player {
         this._shooter = new Shooter({
             loc,
             uid: this._id,
+            camp: 0
         });
         return this._shooter;
     }

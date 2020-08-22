@@ -29,10 +29,11 @@ export class CollsionManager extends EventEmitter {
     public addCollsionUnit(unit: CollsionBase, option: CollsionOption) {
         const { collisionTypes } = option;
         const newLink = new Link<CollsionBase>(unit);
-        if (this._collsionMap[unit.type]) {
-            this._collsionMap[unit.type].nextLink = newLink;
+        const type = unit.from.collsionType;
+        if (this._collsionMap[type]) {
+            this._collsionMap[type].nextLink = newLink;
         }
-        this._collsionMap[unit.type] = newLink;
+        this._collsionMap[type] = newLink;
         let destroyFlag = false;
         unit.once(CollsionEvent.Destroy, () => {
             destroyFlag = true;
@@ -44,10 +45,15 @@ export class CollsionManager extends EventEmitter {
                 if (destroyFlag) {
                     return;
                 }
+                if (nowLink.value.destroyed) {
+                    return;
+                }
                 const result = nowLink.value.intersect(unit);
                 if (result) {
                     nowLink.value.emit(new Event(CollsionEvent.Happen, unit));
+                    unit.emit(new Event(CollsionEvent.Happen, nowLink.value));
                 }
+                nowLink = nowLink.beforeLink;
             }
         });
 

@@ -3,9 +3,12 @@ import { Element, ElementOption } from "_src/client/elements/element";
 import { BulletManager } from "_src/client/elements/bulletManager";
 import { CollsionManager, CollsionType } from "_src/client/elements/collsionManager";
 import Bullet from "_src/client/elements/bullet";
+import { CollsionEvent, CollsionBase } from "_src/client/elements/collsiionBase";
+import Event from "_src/utils/event";
 
 export interface ShooterOption extends ElementOption {
     uid: string;
+    camp: number;
 }
 
 export default class Shooter extends Element {
@@ -19,13 +22,30 @@ export default class Shooter extends Element {
     private _setIntervalFire: any;
     private _bulletColor = [255, 153, 17, 255];
     private _bulletSize = 6;
+    private _lastLoc: Point;
+    private _camp: number;
+    private _originColor: number[];
     protected _collsionUnitType = CollsionType.Shooter;
     constructor(opt: ShooterOption) {
         super(opt);
-        const { uid } = opt;
+        const { uid, camp } = opt;
         this._uid = uid;
         this.size = 10;
+        this._camp = opt.camp;
         this._bulletManager.setParent(this);
+        this._registEvent();
+    }
+
+    public set bulletSize(size: number) {
+        this._bulletSize = size;
+    }
+
+    public set bulletColor(color: number[]) {
+        this._bulletColor = color;
+    }
+
+    public set bulletSpeed(speed: number) {
+        this._bulletSpeed = speed;
     }
 
     public set maxFirePerSec(num: number) {
@@ -48,10 +68,11 @@ export default class Shooter extends Element {
                 CollsionType.Bullet
             ]
         });
-        this._bulletManager
+        this._bulletManager.addCollsionUnit(collisionManager);
     }
 
     public update() {
+        this._lastLoc = this.loc.clone();
         this.updateLocation();
         if (this.speed.mag() !== 0) {
             this.speed.sub(this.speed.clone().mult(this._defaultDecSpeed));
@@ -62,7 +83,7 @@ export default class Shooter extends Element {
     public startFire() {
         const now = Date.now();
         if (now - this._lastFireTime < this._minFireTime) {
-            return;
+            return false;
         }
         if (this._setIntervalFire) {
             clearInterval(this._setIntervalFire);
@@ -72,6 +93,7 @@ export default class Shooter extends Element {
         this._setIntervalFire = setInterval(() => {
             this.fire();
         }, this._minFireTime);
+        return true;
     }
 
     public endFire() {
@@ -80,12 +102,58 @@ export default class Shooter extends Element {
         }
     }
 
+    public destroy() {
+        this._collsionUnit.destroy();
+        this._bulletManager.destroy();
+        super.destroy();
+    }
+
     public fire() {
-        this._bulletManager.addBullet({
+        const bullet = this._bulletManager.addBullet({
             loc: this.loc.clone(),
             speed: this.direction.clone().mult(this._bulletSpeed).add(this.speed),
             color: this._bulletColor,
             size: this._bulletSize
         });
+        bullet.owner = this;
+    }
+
+    private _judgeEnemyBullet(collsiionBase: CollsionBase) {
+        const element = collsiionBase.from as Bullet;
+        const uid = element.owner.uid;
+        return this._uid !== uid;
+    }
+
+    private _registEvent() {
+        this._collsionUnit.on(CollsionEvent.Happen, (event: Event) => {
+            const byCollison: CollsionBase = event.data;
+            const type = byCollison.from.collsionType;
+            if (type === CollsionType.Border) {
+                this._borderCollision();
+            } else if (type === CollsionType.Bullet) {
+                this._bulletCollsion(byCollison);
+            }
+        });
+    }
+
+    private _bulletCollsion(collsionUnit: CollsionBase) {
+        if (!this._judgeEnemyBullet(collsionUnit)) {
+            return;
+        }
+        if (!this._originColor) {
+            this._originColor = this.color;
+        }
+        this.color = [255, 0, 0, 255];
+        const bullet = collsionUnit.from;
+        this.speed.add(bullet.speed.mult(bullet.size / this.size));
+        collsionUnit.from.destroy();
+        setTimeout(() => {
+            this.color = this._originColor;
+        }, 1000);
+    }
+
+    private _borderCollision() {
+        this.loc = this._lastLoc;
+        this.speed = new Point(0, 0, 0);
     }
 }

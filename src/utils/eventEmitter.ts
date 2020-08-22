@@ -15,6 +15,11 @@ export default class EventEmitter {
     private _listeners: IListeners;
     private _oneTimeListeners: IListeners;
     private _parent: EventEmitter;
+    private _destroyed = false;
+
+    public get destroyed() {
+        return this._destroyed;
+    }
 
     public get isInEventTime(): boolean {
         return isInEventTime;
@@ -79,6 +84,7 @@ export default class EventEmitter {
         this._listeners = {};
         this._oneTimeListeners = {};
         this._parent = null;
+        this._destroyed = true;
     }
 
     private _removeEventListener(type: string, listener: Listener, listenerList: IListeners) {

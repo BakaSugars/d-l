@@ -49,7 +49,7 @@ export default class Point {
         this._x /= n;
         this._y /= n;
         this._z /= n;
-        return this;
+    return this;
     }
 
     public clone() {
@@ -58,5 +58,12 @@ export default class Point {
 
     public toArray() {
         return [this. x, this.y];
+    }
+
+    public reverse() {
+        this._x = -this._x;
+        this._y = -this._y;
+        this._z = -this._z;
+        return this;
     }
 }

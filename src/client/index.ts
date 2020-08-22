@@ -24,7 +24,7 @@ export class Game extends EventEmitter{
         const element = document.getElementById('game') as HTMLCanvasElement;
         this._viewPort = new ViewPort(element);
         this._renderer = new Renderer(element);
-        this._scene = new Scene(10, 10, this._renderer);
+        this._scene = new Scene(30, 30, this._renderer);
     }
 
     public connectPlayer() {

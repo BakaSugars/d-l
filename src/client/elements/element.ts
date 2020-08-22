@@ -19,9 +19,9 @@ export abstract class Element extends EventEmitter {
     // xy,yz,zx轴面上形成的角度
     private _direction: Point = new Point(1, 0, 0);
     private _lastUpdateTime: number;
-    private _color = [0, 0, 0, 255];
+    protected _color = [0, 0, 0, 255];
     private _size = 1;
-    protected _collsionUnit: CollsionBase;
+    protected _collsionUnit: CollsionBox;
     protected _collsionUnitType: CollsionType;
 
     constructor(opt: ElementOption) {
@@ -33,6 +33,17 @@ export abstract class Element extends EventEmitter {
         this._size = size || this._size;
         this._lastUpdateTime = Date.now();
         this._id = createId();
+        this._regCollsion();
+    }
+
+    public update() {};
+    
+    public get collsionType() {
+        return this._collsionUnitType;
+    }
+
+    public get collsionUnit() {
+        return this._collsionUnit;
     }
 
     public get size() {
@@ -89,21 +100,34 @@ export abstract class Element extends EventEmitter {
         this._lastUpdateTime = now;
         const deltaDistance = this._speed.clone().mult(deltaTime);
         this._loc = this._loc.add(deltaDistance);
-        this.updateCollsionUnit();
+        if (this._collsionUnit) {
+            this.updateCollsionUnit();
+        }
     }
 
     public updateCollsionUnit() {
-        const deltaValue = this._size / 2;
-        const deltaPoint = new Point(deltaValue, deltaValue, 0);
-        this._collsionUnit = new CollsionBox(
-            this._loc.clone().sub(deltaPoint),
-            this._loc.clone().add(deltaPoint),
-            this._collsionUnitType
-        )
+        const deltaPoint = this._getCollsionPoint();
+        this._collsionUnit.lt = this._loc.clone().sub(deltaPoint);
+        this._collsionUnit.rb = this._loc.clone().add(deltaPoint);
     }
 
     public destroy() {
         this._collsionUnit.destroy();
         super.destroy();
+    }
+
+    protected _getCollsionPoint() {
+        const deltaValue = this._size / 2;
+        const deltaPoint = new Point(deltaValue, deltaValue, 0);
+        return deltaPoint;
+    }
+
+    protected _regCollsion() {
+        const deltaPoint = this._getCollsionPoint();
+        this._collsionUnit = new CollsionBox(
+            this._loc.clone().sub(deltaPoint),
+            this._loc.clone().add(deltaPoint),
+        )
+        this._collsionUnit.from = this;
     }
 }
