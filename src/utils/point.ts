@@ -45,6 +45,10 @@ export default class Point {
         return this;
     }
 
+    public multVector(v: Point) {
+        return v.x * this._x + v.y * this._y + v.z * this._z;
+    }
+
     public div(n: number): Point {
         this._x /= n;
         this._y /= n;

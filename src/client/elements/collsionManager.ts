@@ -35,7 +35,8 @@ export class CollsionManager extends EventEmitter {
         }
         this._collsionMap[type] = newLink;
         let destroyFlag = false;
-        unit.once(CollsionEvent.Destroy, () => {
+        let cb;
+        unit.on(CollsionEvent.Destroy, cb = () => {
             destroyFlag = true;
             newLink.destroy();
         });
@@ -43,6 +44,9 @@ export class CollsionManager extends EventEmitter {
             let nowLink = this._collsionMap[collisionType];
             while (nowLink) {
                 if (destroyFlag) {
+                    return;
+                }
+                if (!nowLink.value) {
                     return;
                 }
                 if (nowLink.value.destroyed) {
@@ -56,6 +60,9 @@ export class CollsionManager extends EventEmitter {
                 nowLink = nowLink.beforeLink;
             }
         });
-
+        if (destroyFlag) {
+            return;
+        }
+        unit.off(CollsionEvent.Destroy, cb);
     }
 }

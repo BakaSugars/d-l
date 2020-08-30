@@ -26,13 +26,15 @@ export abstract class Layer {
         this._gl = this._renderer.gl;
     }
 
-    public draw(matrix: mat4) {
+    public draw(matrix?: mat4) {
+        this._renderer.useProgram(this._program);
         this.update();
         if (!this._vertexArray.byteLength) {
             return;
         }
-        this._renderer.useProgram(this._program);
-        this._program.bindNoCachedMatrix(this._gl, new Float32Array(matrix));
+        if (matrix) {
+            this._program.bindNoCachedMatrix(this._gl, new Float32Array(matrix));
+        }
         const buffers = this._createGLBufferGroup();
         for (const segment of this._segments) {
             this._program.bindVAO(this._gl, buffers, segment);

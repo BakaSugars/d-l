@@ -15,6 +15,7 @@ import BulletLayer from "_src/client/layers/bulletLayer";
 import { CollsionManager } from "_src/client/elements/collsionManager";
 import { TrashFish } from "_src/client/enemy/trashFish";
 import { Element } from "_src/client/elements/element";
+import { SkyBoxLayer } from "_src/client/layers/skyBoxLayer";
 
 export class Scene {
     private _width: number;
@@ -23,6 +24,7 @@ export class Scene {
     private _gridLayer: GridLayer;
     private _shooterLayer: ShooterLayer;
     private _bulletLayer: BulletLayer;
+    private _skyBoxLayer: SkyBoxLayer;
     private _camera: Camera;
     private _border: Border;
     private _collisonManager: CollsionManager;
@@ -35,6 +37,7 @@ export class Scene {
         this._shooterLayer = new ShooterLayer(renderer);
         this._bulletLayer = new BulletLayer(renderer);
         this._gridLayer = new GridLayer(renderer);
+        this._skyBoxLayer = new SkyBoxLayer(renderer);
         this._border = new Border(width, height, this._gridSize);
         this._collisonManager = new CollsionManager();
         this._initGrids();
@@ -45,6 +48,9 @@ export class Scene {
             trashFish.update();
         });
         this._shooterLayer.shooters.forEach((shooter: Shooter) => {
+            if (shooter.destroyed) {
+                return;
+            }
             shooter.update();
         });
     }
@@ -53,6 +59,9 @@ export class Scene {
         this._collisonManager.clear();
         this._border.addCollsionUnit(this._collisonManager);
         this._shooterLayer.shooters.forEach((shooter: Shooter) => {
+            if (shooter.destroyed) {
+                return;
+            }
             shooter.addCollsionUnit(this._collisonManager);
         });
     }
@@ -72,13 +81,14 @@ export class Scene {
     public draw() {
         this.update();
         this.globalCollsion();
+        this._skyBoxLayer.draw();
         this._gridLayer.draw(this._camera.mvpMatrix);
         this._shooterLayer.draw(this._camera.mvpMatrix);
         this._bulletLayer.draw(this._camera.mvpMatrix);
     }
 
     private _initEnemy(hate: Element) {
-        for(let i = 0; i < 50; i++) {
+        for(let i = 0; i < 20; i++) {
             const trashFish = new TrashFish({
                 hate
             });

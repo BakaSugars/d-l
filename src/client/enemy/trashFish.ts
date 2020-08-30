@@ -21,7 +21,8 @@ export class TrashFish extends EnemyBase {
         this._me = new Shooter({
             loc,
             uid: getEnemyUid(),
-            camp: this._camp
+            camp: this._camp,
+            lifePoint: 10
         });
         this._me.maxFirePerSec = this._maxFirePerSec;
         this._me.bulletColor = this._bulletColor;

@@ -65,6 +65,7 @@ export class Link<T> {
         if (this._next) {
             this._next.beforeLink = this._before;
         }
+        this._value = null;
         this._before = undefined;
         this._next = undefined;
     }

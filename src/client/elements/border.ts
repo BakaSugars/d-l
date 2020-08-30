@@ -4,11 +4,13 @@ import CollsionBox from "_src/client/elements/collisionBox";
 import { CollsionType, CollsionManager } from "_src/client/elements/collsionManager";
 import { BorderElement } from "_src/client/elements/borderElement";
 
+const InfinityNum = 100000;
+
 export class Border {
     private _width: number;
     private _height: number;
     private _gridSize: number;
-    private _borderWidth = 20;
+    private _borderWidth = InfinityNum;
     private _topBorder: BorderElement;
     private _leftBorder: BorderElement;
     private _rightBorder: BorderElement;

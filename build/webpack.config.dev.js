@@ -10,9 +10,9 @@ const config = merge(base, {
         filename: "[name].js",
         chunkFilename: '[name].js',
         sourceMapFilename: "[file].map",
-        devtoolModuleFilenameTemplate: function (info) {
-            return "file:///" + info.absoluteResourcePath;
-        },
+        // devtoolModuleFilenameTemplate: function (info) {
+        //     return "file:///" + info.absoluteResourcePath;
+        // },
         library: 'Dark',
         libraryTarget: 'umd',
         umdNamedDefine: true
@@ -29,17 +29,17 @@ const config = merge(base, {
             template: "!!ejs-loader!src/client/index.html",
             inject: false
         }),
-        new DashboardPlugin(),
-        new webpack.HotModuleReplacementPlugin()
-    ],
-    devServer: {
-        contentBase: path.join(__dirname, "../"),
-        compress: true,
-        host: '0.0.0.0',
-        disableHostCheck: true,
-        port: 8888,
-        hot: true
-    }
+        // new DashboardPlugin(),
+        // new webpack.HotModuleReplacementPlugin()
+]
+    // devServer: {
+    //     contentBase: path.join(__dirname, "../"),
+    //     compress: true,
+    //     host: '0.0.0.0',
+    //     disableHostCheck: true,
+    //     port: 8888,
+    //     hot: true
+    // }
 });
 
 module.exports = config;

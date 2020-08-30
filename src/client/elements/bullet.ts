@@ -10,18 +10,46 @@ export const BulletEvent = {
     DESTROY: 'del',
 }
 
+export interface BulletOption extends ElementOption {
+    damage?: number;
+}
+
+const DMG_SPEED_K = 0.1
+const MIN_DMG = 1;
+
 export default class Bullet extends Element {
     private _lifeTime: number = 5000;
     private _lifeEndTimeout: any;
     protected _collsionUnitType = CollsionType.Bullet;
     private _owner: Shooter;
-    constructor(opt: ElementOption) {
+    private _baseDamage: number = 2;
+    constructor(opt: BulletOption) {
         super(opt);
         this.direction = this.speed.clone().unit();
+        this._baseDamage = opt.damage || this._baseDamage;
         this._lifeEndTimeout = setTimeout(() => {
             this.destroy();
         }, this._lifeTime);
         this._registEvent();
+    }
+
+    public getDamage(element: Element) {
+        const speed = this.speed.mag();
+        const deltaSpeed = this.speed.clone().unit().multVector(element.speed);
+        let resultSpeed = speed + deltaSpeed;
+        if (resultSpeed <= 0) {
+            return 0;
+        }
+        if (this.speed.mag() === 0) {
+            return 0;
+        }
+        if (resultSpeed > speed) {
+           resultSpeed = speed * 1.51;
+        } else {
+           resultSpeed = speed * 0.67;
+        }
+        const dmg = Math.max(Math.round(resultSpeed / speed * this._baseDamage), MIN_DMG);
+        return dmg;
     }
 
     public get owner() {

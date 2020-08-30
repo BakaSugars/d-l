@@ -18,12 +18,17 @@ export default class Camera {
     private _scale: number = 1;
     private _pixelMatrix: mat4;
     private _pixelMatrixReverse: mat4;
+    private _directionVPInverseMatrix: mat4;
 
     constructor(viewport: ViewPort) {
         this._pixelHeight = viewport.canvas.offsetHeight;
         this._pixelWidth = viewport.canvas.offsetWidth;
         this.setLoc(new Point(0, 0, 0));
         this.setPitch(1);
+    }
+
+    public get vpInverseMatrix() {
+        return this._directionVPInverseMatrix;
     }
 
     public get mvpMatrix() {
@@ -84,10 +89,19 @@ export default class Camera {
             -this._loc.y * this._scale,
             0
         ]);
-        mat4.scale(this._modelViewMatrix, this._modelViewMatrix, [1, 1, this._scale, 1]);
 
+        mat4.scale(this._modelViewMatrix, this._modelViewMatrix, [1, 1, this._scale, 1]);
+        
         this._projMatrix = mat4.create();
         mat4.perspective(this._projMatrix, this._fov, aspect, 1, this._viewPixelDistance);
+
+        // get vp inverse matrix for skybox
+        const directionVpMatrix = mat4.create();
+        mat4.copy(directionVpMatrix, this._modelViewMatrix);
+        directionVpMatrix[12] = 0;
+        directionVpMatrix[13] = 0;
+        directionVpMatrix[14] = 0;
+        mat4.multiply(directionVpMatrix, this._projMatrix, directionVpMatrix);
 
         this._mvpMatrix = mat4.create();
         mat4.multiply(this._mvpMatrix, this._projMatrix, this._modelViewMatrix);

@@ -52,8 +52,8 @@ var config = merge(base, {
     ]
 });
 
-if (process.env.npm_config_report) {
-    config.plugins.push(new BundleAnalyzerPlugin())
-}
+// if (process.env.npm_config_report) {
+//     config.plugins.push(new BundleAnalyzerPlugin())
+// }
 
 module.exports = config;

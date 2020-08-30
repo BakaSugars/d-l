@@ -5,11 +5,14 @@ import { CollsionManager, CollsionType } from "_src/client/elements/collsionMana
 import Bullet from "_src/client/elements/bullet";
 import { CollsionEvent, CollsionBase } from "_src/client/elements/collsiionBase";
 import Event from "_src/utils/event";
+import { myClearInterval, mySetInterval } from "_src/utils/util";
 
 export interface ShooterOption extends ElementOption {
     uid: string;
     camp: number;
 }
+
+const ELEMENT_SPEED_K = 2;
 
 export default class Shooter extends Element {
     private _uid: string;
@@ -17,7 +20,7 @@ export default class Shooter extends Element {
     private _maxFirePerSec = 3;
     private _minFireTime = 1000 / 3;
     private _lastFireTime = 0;
-    private _bulletSpeed = 0.1;
+    private _bulletSpeed = 0.3;
     private _bulletManager = new BulletManager;
     private _setIntervalFire: any;
     private _bulletColor = [255, 153, 17, 255];
@@ -53,6 +56,10 @@ export default class Shooter extends Element {
         this._minFireTime = 1000 / num;
     }
 
+    public get camp() {
+        return this._camp;
+    }
+
     public get uid() {
         return this._uid;
     }
@@ -86,11 +93,11 @@ export default class Shooter extends Element {
             return false;
         }
         if (this._setIntervalFire) {
-            clearInterval(this._setIntervalFire);
+            myClearInterval(this._setIntervalFire);
         }
         this._lastFireTime = now;
         this.fire();
-        this._setIntervalFire = setInterval(() => {
+        this._setIntervalFire = mySetInterval(() => {
             this.fire();
         }, this._minFireTime);
         return true;
@@ -98,7 +105,7 @@ export default class Shooter extends Element {
 
     public endFire() {
         if (this._setIntervalFire) {
-            clearInterval(this._setIntervalFire);
+            myClearInterval(this._setIntervalFire);
         }
     }
 
@@ -109,6 +116,8 @@ export default class Shooter extends Element {
     }
 
     public fire() {
+        const baseSpeed = this.direction.clone().mult(this._bulletSpeed);
+        const added = this.direction.clone().mult(this.direction.multVector(this.speed));
         const bullet = this._bulletManager.addBullet({
             loc: this.loc.clone(),
             speed: this.direction.clone().mult(this._bulletSpeed).add(this.speed),
@@ -120,8 +129,8 @@ export default class Shooter extends Element {
 
     private _judgeEnemyBullet(collsiionBase: CollsionBase) {
         const element = collsiionBase.from as Bullet;
-        const uid = element.owner.uid;
-        return this._uid !== uid;
+        const camp = element.owner.camp;
+        return this._camp !== camp;
     }
 
     private _registEvent() {
@@ -140,13 +149,32 @@ export default class Shooter extends Element {
         if (!this._judgeEnemyBullet(collsionUnit)) {
             return;
         }
+        const bullet = collsionUnit.from as Bullet;
+        this.speed.add(bullet.speed.mult(bullet.size / this.size));
+        this._getBulletDamage(bullet);
+    }
+
+    private _getBulletDamage(bullet: Bullet) {
+        const damage = bullet.getDamage(this);
+        console.log('cause damage',damage);
+        if (damage === 0) {
+            return;
+        }
+        this._getDamage(damage);
+        bullet.destroy();
+    }
+
+    private _getDamage(dmg: number) {
+        this._lifePoint -= dmg;
+        console.log(this.id,'left life point', this._lifePoint);
+        if (this._lifePoint <= 0) {
+            this.destroy();
+            return;
+        }
         if (!this._originColor) {
             this._originColor = this.color;
         }
         this.color = [255, 0, 0, 255];
-        const bullet = collsionUnit.from;
-        this.speed.add(bullet.speed.mult(bullet.size / this.size));
-        collsionUnit.from.destroy();
         setTimeout(() => {
             this.color = this._originColor;
         }, 1000);

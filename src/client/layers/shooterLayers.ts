@@ -29,6 +29,9 @@ export default class ShooterLayer extends Layer {
         this.vertexArray = new ArrayBuffer(this._vertexBufferByteSize * shooterNum * 4);
         this._elementArray = new Uint16Array(shooterNum * 6);
         this._shooters.forEach((s: Shooter, index: number) => {
+            if (s.destroyed) {
+                return;
+            }
             this._resolveShooter(s, index);
         });
         segment.vertexLength = shooterNum * 4;

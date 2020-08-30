@@ -2,6 +2,8 @@ import triangle_vertex from './glsl/triangle.vertex.glsl';
 import triangle_fragment from './glsl/triangle.fragment.glsl';
 import circle_vertex from './glsl/circle.vertex.glsl';
 import circle_fragment from './glsl/circle.fragment.glsl';
+import skybox_vertex from './glsl/skybox.vertex.glsl';
+import skybox_fragment from './glsl/skybox.fragment.glsl';
 
 export const shaderLib: { [x: string]: string } = {
 };
@@ -21,5 +23,8 @@ registerShader('triangle_fragmentSource', triangle_fragment);
 
 registerShader('circle_vertexSource', circle_vertex);
 registerShader('circle_fragmentSource', circle_fragment);
+
+registerShader('skybox_vertexSource', skybox_vertex);
+registerShader('skybox_fragmentSource', skybox_fragment);
 
 

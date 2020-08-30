@@ -1,6 +1,6 @@
 import EventEmitter from "_src/utils/eventEmitter";
 import Point from "_src/utils/point";
-import { createId } from "_src/utils/util";
+import { createId, INFINITY } from "_src/utils/util";
 import CollsionBox from "_src/client/elements/collisionBox";
 import { CollsionBase, CollsionEvent } from "_src/client/elements/collsiionBase";
 import { CollsionType } from "_src/client/elements/collsionManager";
@@ -10,6 +10,7 @@ export interface ElementOption {
     speed?: Point;
     color?: number[];
     size?: number;
+    lifePoint?: number;
 }
 
 export abstract class Element extends EventEmitter {
@@ -23,14 +24,16 @@ export abstract class Element extends EventEmitter {
     private _size = 1;
     protected _collsionUnit: CollsionBox;
     protected _collsionUnitType: CollsionType;
+    protected _lifePoint = INFINITY;
 
     constructor(opt: ElementOption) {
         super();
-        const { loc, speed, color, size = this._size } = opt;
+        const { loc, speed, color, size = this._size, lifePoint } = opt;
         this._loc = loc;
         this._speed = speed || this._speed;
         this._color = color || this._color;
         this._size = size || this._size;
+        this._lifePoint = lifePoint || this._lifePoint;
         this._lastUpdateTime = Date.now();
         this._id = createId();
         this._regCollsion();
