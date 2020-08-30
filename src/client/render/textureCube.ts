@@ -98,10 +98,21 @@ export class TextureCube extends TextureBase  {
                 const width = img.width;
                 const height = img.height;
                 const type = gl.UNSIGNED_BYTE;
-                const format = gl[this.format];
+                const format = this.format;
                 const level = 0;
-
-                
+                const border = 0;
+                this._textureImage2D(
+                    gl,
+                    target,
+                    level,
+                    format,
+                    width,
+                    height,
+                    border,
+                    format,
+                    type,
+                    img
+                );
             });
         } catch (e) {
             console.error('image upload error', e);
