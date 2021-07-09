@@ -1,20 +1,29 @@
 import { Layer } from "_src/client/layers/layer";
 import Renderer from "_src/client/render/renderer";
 import Buffer, { Attribute } from "_src/client/render/buffer";
+import { TextureCube, createSkyBoxTexture } from "_src/client/render/textureCube";
 
 export class SkyBoxLayer extends Layer {
     protected _programType = 'skybox';
     protected _vertexBufferByteSize = 4;
+    private _texture: TextureCube;
     constructor(renderer: Renderer) {
         super(renderer);
         this._initProgram();
+        this._loadPromise = createSkyBoxTexture().then((tex: TextureCube) => {
+            this._texture = tex;
+            console.log(tex);
+        });
     }
 
     public update() {
-        this._getVertexBuffer();
-        this._program.bindUniform(this._gl, 'u_color', [0, 0, 255, 255]);
+        this._texture.upload(this._gl);
+        this._program.bindUniform(this._gl, 'u_sky_cube', 0);
+        this._texture.bind(this._gl, this._gl.LINEAR, this._gl.REPEAT);
+        this._gl.activeTexture(this._gl.TEXTURE0);
+        this._updateVertexBuffer();
     }
-
+    
     protected _createGLBufferGroup() {
         const attributes: Attribute[] = [];
         attributes.push({
@@ -36,7 +45,7 @@ export class SkyBoxLayer extends Layer {
         }
     }
 
-    private _getVertexBuffer() {
+    private _updateVertexBuffer() {
         const vertexArray = [
             -1, 1,
             1, 1,

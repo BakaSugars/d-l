@@ -1,5 +1,7 @@
 import vec3 from './vec3';
 
+var EPSILON = 0.000001;
+
 // tslint:disable:class-name
 export default class mat4 implements ArrayLike<number> {
     public readonly length: number;
@@ -58,6 +60,33 @@ export default class mat4 implements ArrayLike<number> {
         out[13] = a[13];
         out[14] = a[14];
         out[15] = a[15];
+        return out;
+    }
+
+    public static lookAt(out: mat4, eye: vec3, center: vec3, up: vec3) {
+        var out = out || mat4.create();
+        var zAxis = vec3.normalize(vec3.create(), 
+            vec3.sub(vec3.create(), eye, center));
+        var xAxis = vec3.normalize(vec3.create(), vec3.cross(vec3.create(), up, zAxis));
+        var yAxis = vec3.normalize(vec3.create(), vec3.cross(vec3.create(), zAxis, xAxis));
+
+        out[0] = xAxis[0];
+        out[1] = xAxis[1];
+        out[2] = xAxis[2];
+        out[3] = 0;
+        out[4] = yAxis[0];
+        out[5] = yAxis[1];
+        out[6] = yAxis[2];
+        out[7] = 0;
+        out[8] = zAxis[0];
+        out[9] = zAxis[1];
+        out[10] = zAxis[2];
+        out[11] = 0;
+        out[12] = eye[0];
+        out[13] = eye[1];
+        out[14] = eye[2];
+        out[15] = 1;
+
         return out;
     }
 
@@ -358,7 +387,8 @@ export default class mat4 implements ArrayLike<number> {
         return out;
     }
 
-    public static invert(out: mat4, a: mat4): mat4 | null {
+    public static 
+    invert(out: mat4, a: mat4): mat4 | null {
         const a00 = a[0];
         const a01 = a[1];
         const a02 = a[2];
@@ -396,7 +426,7 @@ export default class mat4 implements ArrayLike<number> {
         let det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
         if (!det) {
-            return null;
+            det = 1 / (2 << 30);
         }
         det = 1.0 / det;
 

@@ -3,6 +3,9 @@ precision {precision} float;
 
 attribute vec2 a_pos;
 
+uniform mat4 u_matrix_array[25];
+uniform int u_coord_id;
+
 varying vec4 v_pos;
 
 void main() {

@@ -3,12 +3,14 @@ import mat4 from "_src/utils/mat4";
 import { ViewPort } from "_src/client/view/viewPort";
 import vec4 from "_src/utils/vec4";
 
+Math.PI * 2
+
 export default class Camera {
     private _loc: Point = new Point(0, 0, 0);
     private _mvpMatrix: mat4
     private _pixelHeight: number;
     private _pixelWidth: number;
-    private _fov = 0.4435011087932844;
+    private _fov = 0.4;
     private _pixelToWorldCenter: number;
     private _currentPitch: number = 0;
     private _currentAngle: number = 0;
@@ -24,7 +26,18 @@ export default class Camera {
         this._pixelHeight = viewport.canvas.offsetHeight;
         this._pixelWidth = viewport.canvas.offsetWidth;
         this.setLoc(new Point(0, 0, 0));
-        this.setPitch(1);
+        // this.setPitch(1);
+        // setInterval(() => {
+        //     this.setAngle(Math.PI / 180 * Date.now() * 0.01);
+        // }, 20);
+    }
+
+    public get angle() {
+        return this._currentAngle;
+    }
+
+    public get pitch() {
+        return this._currentPitch;
     }
 
     public get vpInverseMatrix() {
@@ -42,6 +55,7 @@ export default class Camera {
     }
 
     public setPitch(pitch: number) {
+        console.log(pitch);
         this._currentPitch = pitch;
         this._updateMVPMatrix();
         this._updatePixelMatrix();
@@ -89,20 +103,30 @@ export default class Camera {
             -this._loc.y * this._scale,
             0
         ]);
-
-        mat4.scale(this._modelViewMatrix, this._modelViewMatrix, [1, 1, this._scale, 1]);
         
         this._projMatrix = mat4.create();
         mat4.perspective(this._projMatrix, this._fov, aspect, 1, this._viewPixelDistance);
 
         // get vp inverse matrix for skybox
-        const directionVpMatrix = mat4.create();
-        mat4.copy(directionVpMatrix, this._modelViewMatrix);
-        directionVpMatrix[12] = 0;
-        directionVpMatrix[13] = 0;
-        directionVpMatrix[14] = 0;
-        mat4.multiply(directionVpMatrix, this._projMatrix, directionVpMatrix);
+        const directionViewMatrix = mat4.create();
+        // mat4.scale(directionViewMatrix, directionViewMatrix, [1, -1, 1]);
+        // mat4.copy(directionViewMatrix, this._modelViewMatrix);
+        mat4.lookAt(directionViewMatrix, [
+            Math.cos(-this._currentAngle) * Math.sin(this._currentPitch),
+            Math.cos(this._currentPitch),
+            Math.sin(-this._currentAngle) * Math.sin(this._currentPitch)
+        ], [0, 0, 0], [0, 1, 0]);
+        mat4.invert(directionViewMatrix, directionViewMatrix);
+        
 
+        directionViewMatrix[12] = 0;
+        directionViewMatrix[13] = 0;
+        directionViewMatrix[14] = 0;
+
+        mat4.multiply(directionViewMatrix, this._projMatrix, directionViewMatrix);
+        this._directionVPInverseMatrix = mat4.invert(mat4.create(), directionViewMatrix);
+
+        mat4.scale(this._modelViewMatrix, this._modelViewMatrix, [1, 1, this._scale, 1]);
         this._mvpMatrix = mat4.create();
         mat4.multiply(this._mvpMatrix, this._projMatrix, this._modelViewMatrix);
     }

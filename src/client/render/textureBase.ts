@@ -30,6 +30,21 @@ export abstract class TextureBase {
         }
     }
 
+    protected prepareTexParam(gl: WebGLRenderingContext, filter: any, wrap: any) {
+        if (filter !== this.filter) {
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+            this.filter = filter;
+        }
+
+        if (wrap !== this.wrap) {
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
+            this.wrap = wrap;
+        }
+    }
+
+
     protected _preparePixelStore(gl: WebGLRenderingContext) {
         if (this.format === 'ALPHA') {
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);

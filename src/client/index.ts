@@ -25,6 +25,7 @@ export class Game extends EventEmitter{
         this._viewPort = new ViewPort(element);
         this._renderer = new Renderer(element);
         this._scene = new Scene(30, 30, this._renderer);
+        this._container = element;
     }
 
     public connectPlayer() {

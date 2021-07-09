@@ -33,4 +33,20 @@ export default class vec3 implements ArrayLike<number> {
         }
         return out;
     }
+
+    public static cross(out: vec3, a: vec3, b: vec3): vec3 {
+        out = out || vec3.create();
+        out[0] = a[1] * b[2] - a[2] * b[1];
+        out[1] = a[2] * b[0] - a[0] * b[2];
+        out[2] = a[0] * b[1] - a[1] * b[0];
+        return out;
+    }
+
+    public static sub(out: vec3, a: vec3, b: vec3): vec3 {
+        out = out || vec3.create();
+        out[0] = a[0] - b[0];
+        out[1] = a[1] - b[1];
+        out[2] = a[2] - b[2];
+        return out;
+    }
 }

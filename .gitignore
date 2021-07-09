@@ -1,3 +1,5 @@
 /node_modules
-/dist
 /server
+src/assets/学位证书查询结果.htm
+src/assets/学位证书查询结果_files/footer.html
+src/assets/学位证书查询结果_files/xwcxCounter.jsp

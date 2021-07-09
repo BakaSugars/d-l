@@ -20,16 +20,25 @@ export abstract class Layer {
     protected _float64VertexArray: Float64Array;
     protected _programType: string;
     protected _vertexBufferByteSize: number;
+    protected _loadPromise: Promise<any>;
 
     constructor(renderer: Renderer) {
         this._renderer = renderer;
         this._gl = this._renderer.gl;
     }
 
+    public get loadPromise() {
+        return this._loadPromise;
+    }
+
+    public set loadPromise(promise: any) {
+        this._loadPromise = promise;
+    }
+
     public draw(matrix?: mat4) {
         this._renderer.useProgram(this._program);
         this.update();
-        if (!this._vertexArray.byteLength) {
+        if (this._vertexArray && !this._vertexArray.byteLength) {
             return;
         }
         if (matrix) {

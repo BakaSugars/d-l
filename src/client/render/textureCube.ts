@@ -1,6 +1,14 @@
 import { TextureBase, TextureFormat } from "_src/client/render/textureBase";
 import { ImageType } from "_src/client/render/texture";
 import { loadImage } from "_src/utils/util";
+
+import negX from '../../assets/skybox_nx.jpg';
+import posX from '../../assets/skybox_px.jpg';
+import negY from '../../assets/skybox_ny.jpg';
+import posY from '../../assets/skybox_py.jpg';
+import negZ from '../../assets/skybox_nz.jpg';
+import posZ from '../../assets/skybox_pz.jpg';
+
 export interface ImageBox {
     positive_x: ImageType;
     positive_y: ImageType;
@@ -11,15 +19,12 @@ export interface ImageBox {
 }
 
 const skyboxUrls = {
-    positive_x: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/pos-x.jpg',
-    negative_x:
-    'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/neg-x.jpg',
-    positive_y: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/pos-y.jpg',
-    negative_y:
-    'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/neg-y.jpg',
-    positive_z: 'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/pos-z.jpg',
-    negative_z:
-    'https://webglfundamentals.org/webgl/resources/images/computer-history-museum/neg-z.jpg'
+    positive_x: posX,
+    negative_x: negX,
+    positive_y: posY,
+    negative_y: negY,
+    positive_z: posZ,
+    negative_z: negZ
 }
 
 
@@ -40,7 +45,7 @@ export async function createSkyBoxTexture() {
     const promises = [];
     for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        const url = skyboxUrls[i];
+        const url = skyboxUrls[key];
         const imgPromise = loadImage(url);
         imgPromise.then((img: any) => {
             imgBox[key] = img;
@@ -63,10 +68,9 @@ export class TextureCube extends TextureBase  {
     }
 
     public update(imageBox: ImageBox) {
-        this.imageBox = imageBox;
         this.filter = null;
         this.wrap = null;
-        this.imageBox = null;
+        this.imageBox = imageBox;
     }
 
     public upload(gl: WebGLRenderingContext) {
@@ -83,11 +87,11 @@ export class TextureCube extends TextureBase  {
 
         const keyTargetMap = {
             positive_x: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-            positive_y: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-            positive_z: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
             negative_x: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+            positive_y: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
             negative_y: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-            negative_z: gl.TEXTURE_CUBE_MAP_NEGATIVE_X
+            positive_z: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+            negative_z: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
         };
 
         try {
@@ -101,6 +105,8 @@ export class TextureCube extends TextureBase  {
                 const format = this.format;
                 const level = 0;
                 const border = 0;
+                console.log(img, width, height);
+                gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
                 this._textureImage2D(
                     gl,
                     target,
@@ -113,14 +119,23 @@ export class TextureCube extends TextureBase  {
                     type,
                     img
                 );
+                // gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
             });
+            gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+
+
+            gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            this.imageBox = null;
         } catch (e) {
             console.error('image upload error', e);
         }
     }
 
     public bind(gl: WebGLRenderingContext, filter: any, wrap: any) {
-
+        if(!this.texture) {
+            return;
+        }
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
     }
 
     public destroy() {

@@ -4,6 +4,7 @@ import Camera from "_src/client/view/camera";
 import Keyboard from "_src/client/ui/keyboard";
 import { Mouse, MOUSE_EVENT } from "_src/client/ui/mouse";
 import Event from "_src/utils/event";
+import { GMouseEvent } from "_src/client/ui/mouseEvent";
 
 export interface PlayerConfig {
     id: string;
@@ -69,19 +70,49 @@ export class Player {
             return false;
         }
         this._bindMouseDown();
-        this._mouse.on(MOUSE_EVENT.MOVE, (event: Event) => {
-            const coord = event.data;
-            const direction = event.data.sub(this._shooter.loc);
+        this._mouse.on(MOUSE_EVENT.MOVE, (event: GMouseEvent) => {
+            const direction = event.coord.sub(this._shooter.loc);
             this._shooter.direction = direction.unit();
         });
     }
 
     private _bindMouseDown () {
-        this._mouse.once(MOUSE_EVENT.DOWN, () => {
+        this._bindLeft();
+        this._bindRight();
+    }
+
+    private _bindLeft() {
+        this._mouse.once(MOUSE_EVENT.LEFTDOWN, () => {
             this._shooter.startFire();
-            this._mouse.once(MOUSE_EVENT.UP, () => {
+            this._mouse.once(MOUSE_EVENT.LEFTUP, () => {
                 this._shooter.endFire();
-                this._bindMouseDown();
+                this._bindLeft();
+            });
+        });
+    }
+
+    private _bindRight() {
+        const pitchK = 0.01;
+        const angleK = 0.01;
+        this._mouse.once(MOUSE_EVENT.RIGHTDOWN, (e: GMouseEvent) => {
+            let cb: (e: GMouseEvent) => any;
+            let beforeLoc = e.mousePos;
+            console.log(beforeLoc);
+            this._mouse.on(MOUSE_EVENT.MOVE, cb = (e: GMouseEvent) => {
+                const nowLoc = e.mousePos;
+
+                const deltaPoint = nowLoc.clone().sub(beforeLoc);
+                const deltaAngle = deltaPoint.x * angleK;
+                const deltaPitch = deltaPoint.y * pitchK;
+
+                this._camera.setAngle(this._camera.angle - deltaAngle);
+                this._camera.setPitch(this._camera.pitch + deltaPitch);
+
+                beforeLoc = nowLoc;
+            });
+            this._mouse.once(MOUSE_EVENT.RIGHTUP, () => {
+                this._mouse.off(MOUSE_EVENT.MOVE, cb);
+                this._bindRight();
             });
         });
     }
@@ -92,7 +123,8 @@ export class Player {
         }
 
         this._keyboard.on('change_speed', (vector: Point) => {
-            this.shooter.speed.add(vector);
+            const angle = this._camera.angle;
+            this.shooter.speed.add(vector.rotate(-angle));
         });
     }
 }

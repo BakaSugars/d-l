@@ -78,17 +78,25 @@ export class Scene {
         p.fitCamera();
     }
 
-    public draw() {
+    public async prepareLayers() {
+        if (this._skyBoxLayer.loadPromise) {
+            await this._skyBoxLayer.loadPromise;
+            this._skyBoxLayer.loadPromise = null;
+        }
+    }
+
+    public async draw() {
+        await this.prepareLayers();
         this.update();
         this.globalCollsion();
-        this._skyBoxLayer.draw();
+        this._skyBoxLayer.draw(this._camera.vpInverseMatrix);
         this._gridLayer.draw(this._camera.mvpMatrix);
         this._shooterLayer.draw(this._camera.mvpMatrix);
         this._bulletLayer.draw(this._camera.mvpMatrix);
     }
 
     private _initEnemy(hate: Element) {
-        for(let i = 0; i < 20; i++) {
+        for(let i = 0; i < 200; i++) {
             const trashFish = new TrashFish({
                 hate
             });

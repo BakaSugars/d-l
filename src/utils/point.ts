@@ -70,4 +70,12 @@ export default class Point {
         this._z = -this._z;
         return this;
     }
+
+    public rotate(r: number) {
+        const x = this._x;
+        const y = this._y;
+        this._x = x * Math.cos(r) - y * Math.sin(r);
+        this._y = x * Math.sin(r) + y * Math.cos(r);
+        return this;
+    }
 }
