@@ -6,7 +6,7 @@ import { ViewPort } from "_src/client/view/viewPort";
 import Keyboard from "_src/client/ui/keyboard";
 import EventEmitter from "_src/utils/eventEmitter";
 import Point from "_src/utils/point";
-import WSocket from "./net/ws";
+// import WSocket from "./net/ws";
 import { wsServerUrl } from "_src/utils/constant";
 import { Connection } from "_src/client/net/connection";
 import { Mouse } from "_src/client/ui/mouse";
@@ -40,7 +40,7 @@ export class Game extends EventEmitter{
             mouse
         });
         this._scene.joinPlayer(this._player);
-        this._connection = new Connection(this._player);
+        // this._connection = new Connection(this._player);
     }
     
     public framePaint() {
