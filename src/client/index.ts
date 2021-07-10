@@ -10,6 +10,7 @@ import Point from "_src/utils/point";
 import { wsServerUrl } from "_src/utils/constant";
 import { Connection } from "_src/client/net/connection";
 import { Mouse } from "_src/client/ui/mouse";
+import { UIElement } from "_src/client/ui/uiElement";
 
 
 export class Game extends EventEmitter{
@@ -19,13 +20,20 @@ export class Game extends EventEmitter{
     private _player: Player;
     private _connection: Connection;
     private _container: HTMLElement;
+    private _canvas: HTMLCanvasElement;
+    private _uiElement: UIElement;
     constructor() {
         super();
-        const element = document.getElementById('game') as HTMLCanvasElement;
-        this._viewPort = new ViewPort(element);
-        this._renderer = new Renderer(element);
+        const container = document.getElementById('gameContainer');
+        this._container = container;
+        this._uiElement = new UIElement(this._container);
+        const canvas = document.createElement('canvas') as HTMLCanvasElement;
+        container.appendChild(canvas);
+        canvas.id = 'game';
+        this._viewPort = new ViewPort(canvas);
+        this._renderer = new Renderer(canvas);
         this._scene = new Scene(30, 30, this._renderer);
-        this._container = element;
+        this._canvas = canvas;
     }
 
     public connectPlayer() {

@@ -7,3 +7,13 @@ export const PlayerMessageType = {
 export const WorldMessageType = {
     UPDATE: 0,
 }
+
+function IsPC(userAgentInfo: string) {
+    try {
+        return !/Android|SymbianOS|Windows Phone|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(userAgentInfo);
+    } catch (e) {
+        return true;
+    }
+}
+
+export const isPc = IsPC(navigator.userAgent);
