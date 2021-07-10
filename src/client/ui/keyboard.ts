@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import EventEmitter from "_src/utils/eventEmitter";
 import Event from "_src/utils/event";
 import Point from "_src/utils/point";
 
@@ -19,7 +19,7 @@ export const enum KeyCode {
     MinusFirefox = 173
 }
 
-const SPEED_BASE = 0.01;
+export const SPEED_BASE = 0.01;
 const speedMap = {
 };
 speedMap[KeyCode.W] = new Point(0, -1, 0);
@@ -68,7 +68,7 @@ export default class Keyboard extends EventEmitter{
                     }
                     vector.unit();
                     vector.mult(SPEED_BASE);
-                    this.emit('change_speed', vector);
+                    this.emit(new Event('change_speed', vector));
                     loop();
                 });
             });

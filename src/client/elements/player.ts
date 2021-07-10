@@ -5,6 +5,7 @@ import Keyboard from "_src/client/ui/keyboard";
 import { Mouse, MOUSE_EVENT } from "_src/client/ui/mouse";
 import Event from "_src/utils/event";
 import { GMouseEvent } from "_src/client/ui/mouseEvent";
+import { UIElement } from "../ui/uiElement";
 
 export interface PlayerConfig {
     id: string;
@@ -12,6 +13,7 @@ export interface PlayerConfig {
     camera: Camera;
     keyboard?: Keyboard;
     mouse?: Mouse;
+    uiElement?: UIElement;
 }
 
 export class Player {
@@ -20,16 +22,19 @@ export class Player {
     private _shooter: Shooter;
     private _camera: Camera;
     private _mouse: Mouse;
-    private _keyboard: Keyboard
+    private _keyboard: Keyboard;
+    private _uiElement: UIElement;
     constructor(config: PlayerConfig) {
-        const {secret, id, camera, keyboard, mouse} = config;
+        const {secret, id, camera, keyboard, mouse, uiElement} = config;
         this._keyboard = keyboard;
         this._mouse = mouse;
+        this._uiElement = uiElement;
         this._secret = secret;
         this._id = id;
         this._camera = camera;
         this._bindKeyboard();
         this._bindMouse();
+        this._bindUIElement();
     }
 
     public set loc(val: Point) {
@@ -122,7 +127,21 @@ export class Player {
             return false;
         }
 
-        this._keyboard.on('change_speed', (vector: Point) => {
+        this._keyboard.on('change_speed', (e: Event) => {
+            const vector = e.data;
+            const angle = this._camera.angle;
+            this.shooter.speed.add(vector.rotate(-angle));
+        });
+    }
+
+    private _bindUIElement() {
+        if (!this._uiElement) {
+            return false;
+        }
+
+        this._uiElement.on('change_speed', (e: Event) => {
+            console.log('e', e);
+            const vector = e.data;
             const angle = this._camera.angle;
             this.shooter.speed.add(vector.rotate(-angle));
         });

@@ -26,9 +26,14 @@
             outline: none;
             border: none;
         }
-        #game {
+        #game, #gameContainer {
             height: 100%;
             width: 100%;
+        }
+        #pannel {
+            position: absolute;
+            top: 5px;
+            left: 5px;
         }
     </style>
     
@@ -38,7 +43,9 @@
     <meta name="description" content="dark&light">
 </head>
 <body>
-<canvas id = 'game'></canvas>
+<div id='pannel'></div>
+<div id='gameContainer'>
+</div>
 </canvas>
 
     <script type="text/javascript" src="dark.js"></script>

@@ -1,5 +1,6 @@
 import EventEmitter from "_src/utils/eventEmitter";
 import Point from "_src/utils/point";
+import Event from "_src/utils/event";
 
 export interface ITouchButtonConfiig {
     container: HTMLElement,
@@ -15,6 +16,16 @@ export enum POSITION {
     BOTTOM_LEFT = 3,
     BOTTOM_RIGHT = 4
 }
+
+export enum BUTTON_EVENT {
+    DOWN = "BUTTONDOWN",
+    UP = "BUTTONUP"
+}
+
+document.body.addEventListener('touchmove', function (e) {
+	e.preventDefault();
+	e.stopPropagation();
+}, {passive: false})
 
 export class TouchButton extends EventEmitter {
     private _button: HTMLElement;
@@ -34,6 +45,10 @@ export class TouchButton extends EventEmitter {
         this._init();
     }
 
+    public get text() {
+        return this._text;
+    }
+
     private _init() {
         this._button = document.createElement('button');
         const PX = 'px';
@@ -41,6 +56,8 @@ export class TouchButton extends EventEmitter {
         this._button.style.width = this._size.x + PX;
         this._button.style.height = this._size.y + PX;
         this._button.style.position = 'absolute';
+        this._button.style.userSelect = 'none';
+        this._button.style.opacity = '0.3';
         if (this._position === POSITION.TOP_LEFT) {
             this._button.style.top = this._offset.y + PX;
             this._button.style.left = this._offset.x + PX;
@@ -63,13 +80,17 @@ export class TouchButton extends EventEmitter {
         this._touchEnd = this._touchEnd.bind(this);
         this._button.addEventListener('touchstart', this._touchStart);
         this._button.addEventListener('touchend', this._touchEnd);
+        this._button.addEventListener('mousedown', this._touchStart);
+        this._button.addEventListener('mouseup', this._touchEnd);
     }
 
-    private _touchStart() {
-
+    private _touchStart(e: TouchEvent) {
+        e.stopPropagation();
+        this.emit(new Event(BUTTON_EVENT.DOWN, this))
     }
 
-    private _touchEnd() {
-
+    private _touchEnd(e: TouchEvent) {
+        e.stopPropagation();
+        this.emit(new Event(BUTTON_EVENT.UP, this));
     }
 }

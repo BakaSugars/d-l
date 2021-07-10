@@ -30,6 +30,11 @@
             height: 100%;
             width: 100%;
         }
+        #pannel {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+        }
     </style>
     <%= htmlWebpackPlugin.options.css %>
     <title>
@@ -38,6 +43,7 @@
     <meta name="description" content="<%= htmlWebpackPlugin.options.title %>">
 </head>
 <body>
+<div id='pannel'></div>
 <div id='gameContainer'>
 </div>
 </canvas>

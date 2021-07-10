@@ -45,7 +45,8 @@ export class Game extends EventEmitter{
             secret: 'sjwsjw',
             camera,
             keyboard,
-            mouse
+            mouse,
+            uiElement: this._uiElement
         });
         this._scene.joinPlayer(this._player);
         // this._connection = new Connection(this._player);

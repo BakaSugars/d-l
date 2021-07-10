@@ -33,8 +33,8 @@ export class Mouse extends EventEmitter {
             e.preventDefault();
         };
         document.addEventListener(MOUSE_EVENT.MOVE, this._onMouseMove.bind(this));
-        document.addEventListener(MOUSE_EVENT.DOWN, this._onMouseDown.bind(this));
-        document.addEventListener(MOUSE_EVENT.UP, this._onMouseUp.bind(this));
+        this._element.addEventListener(MOUSE_EVENT.DOWN, this._onMouseDown.bind(this));
+        this._element.addEventListener(MOUSE_EVENT.UP, this._onMouseUp.bind(this));
     }
 
     public init(camera: Camera) {
